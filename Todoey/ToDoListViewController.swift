@@ -10,7 +10,7 @@ import UIKit
 
 class ToDoListViewController: UITableViewController {
 
-    let itemArray = ["Find Mikey", "Buy eggos","Destroy deogorgons"]
+    var itemArray = ["Find Mikey", "Buy eggos","Destroy deogorgons"]
     
     
     
@@ -51,6 +51,40 @@ class ToDoListViewController: UITableViewController {
         tableView.deselectRow(at: indexPath, animated: true)
         
     }
+    
+    //MARK: - Add New Items
+    
+    @IBAction func addButtonPressed(_ sender: UIBarButtonItem) {
+    
+        var textField = UITextField()
+        
+        let alert = UIAlertController(title: "Add New Todoey Item", message: "", preferredStyle: .alert)
+        
+        let alertAction = UIAlertAction(title: "Add Item", style: .default) { (action) in
+            // What will happen once the user clicks the Add Item button on our IUAlert
+            
+            self.itemArray.append(textField.text!) // kan trygt force unwrap her siden et tekstfelt aldri vil være NIL, men tom string
+            
+            self.tableView.reloadData()
+        }
+        
+        alert.addAction(alertAction)
+        
+        // completion block skjer nå tekstfeltet blir laget
+        alert.addTextField { (alertTextfield) in
+            alertTextfield.placeholder = "Create New Item"
+        
+            textField = alertTextfield
+        }
+        
+        
+        present(alert, animated: true, completion: nil)
+        
+            
+    }
+
+    
+    
     
 }
 
