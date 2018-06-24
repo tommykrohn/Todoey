@@ -14,31 +14,10 @@ class ToDoListViewController: UITableViewController {
     
     let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("Item.plist")
     
-   // let defaults = UserDefaults.standard
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         loadItems()
-       
-//        let newItem = Item()
-//
-//        newItem.title = "Find Mike"
-//        newItem.done = true
-//        itemArray.append(newItem)
-//
-//        let newItem2 = Item()
-//        newItem2.title = "Kjøp melk"
-//        itemArray.append(newItem2)
-//
-//        let newItem3 = Item()
-//        newItem3.title = "Hundemat til Willy"
-//        itemArray.append(newItem3)
-
-        
-//        if let items = defaults.array(forKey: "TodoListArray") as? [Item] {
-//            itemArray = items
-//        }
         
     }
 
@@ -58,17 +37,7 @@ class ToDoListViewController: UITableViewController {
         
         //Ternary operator ==>
         //value = conition ? valueiftrue : valueiffalse
-        
-//        cell .accessoryType = item.done == true ? .checkmark : .none
-        
         cell .accessoryType = item.done ? .checkmark : .none
-        
-//        if item.done == true {
-//            cell.accessoryType = .checkmark
-//        }
-//        else {
-//            cell.accessoryType = .none
-//        }
         
         return cell
         
@@ -80,20 +49,6 @@ class ToDoListViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
         itemArray[indexPath.row].done = !itemArray[indexPath.row].done
-        
-//        if itemArray[indexPath.row].done == false {
-//            itemArray[indexPath.row].done = true
-//        }
-//        else {
-//            itemArray[indexPath.row].done = false
-//        }
-        
-//        if tableView.cellForRow(at: indexPath)?.accessoryType == .checkmark {
-//            tableView.cellForRow(at: indexPath)?.accessoryType = .none
-//        }
-//        else {
-//            tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark
-//        }
         
         saveItems()
         
@@ -118,9 +73,6 @@ class ToDoListViewController: UITableViewController {
             
             self.saveItems()
             
-            //self.itemArray.append(textField.text!) // kan trygt force unwrap her siden et tekstfelt aldri vil være NIL, men tom string
-            //self.defaults.setValue(self.itemArray, forKey: "TodoListArray")
-            
         }
         
         alert.addAction(alertAction)
@@ -132,10 +84,8 @@ class ToDoListViewController: UITableViewController {
             textField = alertTextfield
         }
         
-        
         present(alert, animated: true, completion: nil)
         
-            
     }
 
     func saveItems() {
