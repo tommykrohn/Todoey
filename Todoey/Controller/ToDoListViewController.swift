@@ -12,29 +12,33 @@ class ToDoListViewController: UITableViewController {
 
     var itemArray = [Item]()
     
-    let defaults = UserDefaults.standard
+    let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("Item.plist")
+    
+   // let defaults = UserDefaults.standard
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let newItem = Item()
-        
-        newItem.title = "Find Mike"
-        newItem.done = true
-        itemArray.append(newItem)
-        
-        let newItem2 = Item()
-        newItem2.title = "Kjøp melk"
-        itemArray.append(newItem2)
-        
-        let newItem3 = Item()
-        newItem3.title = "Hundemat til Willy"
-        itemArray.append(newItem3)
+        loadItems()
+       
+//        let newItem = Item()
+//
+//        newItem.title = "Find Mike"
+//        newItem.done = true
+//        itemArray.append(newItem)
+//
+//        let newItem2 = Item()
+//        newItem2.title = "Kjøp melk"
+//        itemArray.append(newItem2)
+//
+//        let newItem3 = Item()
+//        newItem3.title = "Hundemat til Willy"
+//        itemArray.append(newItem3)
 
         
-        if let items = defaults.array(forKey: "TodoListArray") as? [Item] {
-            itemArray = items
-        }
+//        if let items = defaults.array(forKey: "TodoListArray") as? [Item] {
+//            itemArray = items
+//        }
         
     }
 
@@ -45,7 +49,6 @@ class ToDoListViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        print("Cell for row at indexpath")
         let cell = tableView.dequeueReusableCell(withIdentifier: "ToDoItemCell", for: indexPath)
         
         
@@ -78,11 +81,6 @@ class ToDoListViewController: UITableViewController {
         
         itemArray[indexPath.row].done = !itemArray[indexPath.row].done
         
-        let item = itemArray[indexPath.row]
-        
-        print(item.title)
-        print(item.done)
-        
 //        if itemArray[indexPath.row].done == false {
 //            itemArray[indexPath.row].done = true
 //        }
@@ -97,7 +95,8 @@ class ToDoListViewController: UITableViewController {
 //            tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark
 //        }
         
-        tableView.reloadData()
+        saveItems()
+        
         tableView.deselectRow(at: indexPath, animated: true)
         
     }
@@ -117,12 +116,11 @@ class ToDoListViewController: UITableViewController {
             newItem.title = textField.text!
             self.itemArray.append(newItem)
             
+            self.saveItems()
             
             //self.itemArray.append(textField.text!) // kan trygt force unwrap her siden et tekstfelt aldri vil være NIL, men tom string
+            //self.defaults.setValue(self.itemArray, forKey: "TodoListArray")
             
-            self.defaults.setValue(self.itemArray, forKey: "TodoListArray")
-            
-            self.tableView.reloadData()
         }
         
         alert.addAction(alertAction)
@@ -140,7 +138,30 @@ class ToDoListViewController: UITableViewController {
             
     }
 
+    func saveItems() {
+        let encoder = PropertyListEncoder()
+        
+        do {
+            let data = try encoder.encode(itemArray)
+            try data.write(to: dataFilePath!)
+        } catch {
+            print("Error encoding item array, \(error)")
+        }
+        
+        self.tableView.reloadData()
+    }
     
+    func loadItems() {
+        
+        do {
+            let data = try Data(contentsOf: dataFilePath!)
+            let decoder = PropertyListDecoder()
+            itemArray = try decoder.decode([Item].self, from: data)
+            
+        } catch {
+            print("Error decodig item! \(error)")
+        }
+    }
     
     
 }
