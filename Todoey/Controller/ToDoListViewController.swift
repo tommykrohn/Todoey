@@ -19,7 +19,6 @@ class ToDoListViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-//        print(dataFilePath)
         loadItems()
         
     }
@@ -47,7 +46,7 @@ class ToDoListViewController: UITableViewController {
     }
     
     
-    //MARK: - TableView Delegate Methods
+    //MARK: - TABLEVIEW DELEGATE METHODS
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
@@ -61,7 +60,7 @@ class ToDoListViewController: UITableViewController {
         
     }
     
-    //MARK: - Add New Items
+    //MARK: - ADD NEW ITEMS
     
     @IBAction func addButtonPressed(_ sender: UIBarButtonItem) {
     
@@ -97,6 +96,8 @@ class ToDoListViewController: UITableViewController {
         
     }
 
+    //MARK: - CORE DATA HANDLING
+    
     func saveItems() {
      
         do {
@@ -108,8 +109,7 @@ class ToDoListViewController: UITableViewController {
         self.tableView.reloadData()
     }
     
-    func loadItems() {
-        let request : NSFetchRequest<Item> = Item.fetchRequest()
+    func loadItems(with request: NSFetchRequest<Item> = Item.fetchRequest()) { // = Item:Fetchrequest er default verdi. hent alt når ingen parametre er gitt
         
         do {
             itemArray = try CONTEXT.fetch(request)
@@ -117,8 +117,42 @@ class ToDoListViewController: UITableViewController {
             print("Error fetching data from context \(error)")
         }
 
+        self.tableView.reloadData()
     }
     
     
 }
+
+//MARK: - SEARCHBAR METHODS
+
+extension ToDoListViewController: UISearchBarDelegate {
+    
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        let request : NSFetchRequest<Item> = Item.fetchRequest()
+        
+        request.predicate = NSPredicate(format: "title CONTAINS[cd] %@", searchBar.text!)
+        request.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)] // forventer array av sortdescripor, men siden det kun er 1 så settes denne i []
+        
+        loadItems(with: request)
+        
+    }
+    
+    // når bruker krysser ut teksten
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        if searchBar.text?.count == 0 {
+            loadItems()
+            
+            DispatchQueue.main.async {
+                searchBar.resignFirstResponder()
+            }
+        }
+    }
+    
+}
+    
+    
+    
+    
+    
+
 
